@@ -31,9 +31,6 @@ public abstract class AbstractDescriptionBuilder {
                 String[] betweenSegments = betweenSegmentOfInterval.split("-");
                 description += ", " + MessageFormat.format(getBetweenDescriptionFormat(betweenSegmentOfInterval), getSingleItemDescription(betweenSegments[0]), getSingleItemDescription(betweenSegments[1]));
             }
-        } else if (expression.contains("-")) {
-            String[] segments = expression.split("-");
-            description = MessageFormat.format(getBetweenDescriptionFormat(expression), getSingleItemDescription(segments[0]), getSingleItemDescription(segments[1]));
         } else if (expression.contains(",")) {
             String[] segments = expression.split(",");
             StringBuilder descriptionContent = new StringBuilder();
@@ -49,9 +46,18 @@ public abstract class AbstractDescriptionBuilder {
                     descriptionContent.append(I18nMessages.get("and"));
                     descriptionContent.append(" ");
                 }
-                descriptionContent.append(getSingleItemDescription(segments[i]));
+                if (segments[i].contains("-")) {
+                    String betweenSegmentOfInterval = segments[i];
+                    String[] betweenSegments = betweenSegmentOfInterval.split("-");
+                    descriptionContent.append(MessageFormat.format(getBetweenDescriptionFormat(segments[i]), getSingleItemDescription(betweenSegments[0]), getSingleItemDescription(betweenSegments[1])));
+                } else {
+                    descriptionContent.append(getSingleItemDescription(segments[i]));
+                }
             }
             description = MessageFormat.format(getDescriptionFormat(expression), descriptionContent.toString());
+        } else if (expression.contains("-")) {
+            String[] segments = expression.split("-");
+            description = MessageFormat.format(getBetweenDescriptionFormat(expression), getSingleItemDescription(segments[0]), getSingleItemDescription(segments[1]));
         }
         return description;
     }
